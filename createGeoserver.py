@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from sqlalchemy import create_engine, MetaData, Table, select, union_all
 from databases import Database
 
-DATABASE_URL = "postgresql://postgres:admin@localhost:5432/geoportal"
+DATABASE_URL = "postgresql://geoserver:C0l0mB142024*@18.222.63.78:5432/geoportal"
 
 engine = create_engine(DATABASE_URL)
 metadata = MetaData()
@@ -30,9 +30,9 @@ def loadLayers(store_name: str, file_Name : str, tipo:str):
     try:
         #Conexión a la base de datos
         connection = psycopg2.connect(
-            host = "localhost",
-            user = "postgres",
-            password = "admin",
+            host = "18.222.63.78",
+            user = "geoserver",
+            password = "C0l0mB142024*",
             database = "geoportal",
             port = "5432" 
         )
@@ -51,7 +51,7 @@ def loadLayers(store_name: str, file_Name : str, tipo:str):
         cursor.close()
         
         # Initialize the library
-        geo = Geoserver('http://127.0.0.1:8080/geoserver', username='admin', password='geoserver')
+        geo = Geoserver('http://ec2-3-17-5-31.us-east-2.compute.amazonaws.com:8080/geoserver', username='admin', password='Colombia2024')
         # Crear Espacio de trabajo
         #geo.create_workspace(workspace='demo1')
         ruta = r"C:/xampp/htdocs/Geoportal/python/"+file_Name
@@ -62,21 +62,6 @@ def loadLayers(store_name: str, file_Name : str, tipo:str):
         return "Se guardo exitosamente"
     except Exception as err:
         return f"Unexpected {err=}, {type(err)=}"
-
-
-
-@app.get("/style/{file_Name}")
-def loadStyles(file_Name : str):
-    geo = Geoserver('http://127.0.0.1:8080/geoserver', username='admin', password='geoserver')
-    
-    ruta = r"C:/xampp/htdocs/Geoportal/python/"+file_Name
-    nombre = file_Name.split(".")
-    
-    geo.delete_style(style_name=nombre[0], workspace='geoportal')
-    
-    geo.upload_style(path=ruta,workspace='geoportal')
-    geo.publish_style(layer_name=nombre[0], style_name=nombre[0], workspace='geoportal')
-
 
 #------------------------------------------------------------
 #FUNCIONES PARA TRAER LA INFORMACION DE LAS CAPAS EN EL VISOR
